@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500;700&display=swap');
+
+$robotoFont: 'Roboto', sans-serif;
+$textColor: #707070;
+@mixin setBorders($topL, $topR, $bottomL, $bottomR) {
+    border-top-left-radius: $topL;
+    border-top-right-radius: $topR;
+    border-bottom-left-radius: $bottomL;
+    border-bottom-right-radius: $bottomR;
+}
+@mixin paragraphs {
+    color: $textColor;
+    text-align: center;
+    font-size: .93rem;
+    line-height: normal;
+}
+
+@mixin forTitles($fontSize) {
+    font-size: $fontSize;
+    font-weight: 600;
+    color: black;
+    -webkit-text-stroke-width: .1px;
+}
+@mixin formText {
+    @include forTitles(.95rem);
+    margin-bottom: .5rem;
+    -webkit-text-stroke-width: .2px;
+}
+
+@mixin errorStyles {
+    color: #F3483F;
+    font-weight: bolder;
+}
+.contentWrapper {
+    padding-top: 3.3%;
+    width: 100%;
+    font-family: $robotoFont;
+    
+    .content {
+        width: 57%;
+        @media (max-width: 740px) {
+            width: 80%;
+        }
+        @media (max-width: 400px) {
+            width: 90%;
+        }
+    }
+    .headerTitle {
+        @include forTitles(1.76rem);
+        margin-top: .5rem;
+        padding: 1.3rem;
+        margin-bottom: 0;
+        text-align: center;
+    }
+    .headerText {
+        @include paragraphs();
+        padding: .3rem 2rem 0 2rem;
+    }
+}
+.bodyContainer {
+    margin-top: 1.5rem;
+    width: 66%;
+    height: 35rem;
+    .form {
+        padding: 3rem 2.5rem;
+        @include setBorders(.7rem, 1.5rem, 1.5rem, 1.5rem);
+        -webkit-box-shadow: 0px 4px 17px -6px #A3A3A3;
+        -moz-box-shadow: 0px 4px 17px -6px #A3A3A3;
+        box-shadow: 0px 4px 17px -6px #A3A3A3;
+
+        .formText {
+            @include formText();
+        }
+
+        .formField {
+            font-size: .9rem;
+            width: 100%;
+            text-align: left;
+            color: #b8b8b8;
+            background-color: #ffff;
+            border: 1px solid #EBEBEB;
+            &::placeholder {
+                color: #b8b8b8;
+            }
+            border-radius: 6px;
+        }
+        .formFieldLineHeight {
+            height: 1rem;
+        }
+        .sendButton {
+            color: #ffffff;
+            background-color: #e03b65;
+            border: none;
+            width: 39%;
+            padding: .8rem;
+            border-radius: 2rem;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: .2s;
+            @media (max-width: 1000px) {
+                width: 50%;
+            }
+            @media (max-width: 800px) {
+                width: 60%;
+            }
+            @media (max-width: 330px) {
+                width: 70%;
+            }
+            &:hover {
+                opacity: 90%;
+                transform: scale(.95);
+            }
+        }
+        .disabled {
+            pointer-events: none;
+        }
+        .errors {
+            @include errorStyles();
+        }
+    }
+}
