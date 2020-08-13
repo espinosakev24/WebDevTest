@@ -4,11 +4,16 @@ import '../App.scss'
 import sigmaImg from '../imgs/sigma-image.png'
 import Dropdown from './Dropdown';
 import axios from 'axios';
+import swal from 'sweetalert';
 
+
+const ALL_STATES = 'http://localhost:4000/colombia/'
 const COL_PLACES_URL = 'http://localhost:4000/colombia/departments';
+const POST_USERS = 'http://localhost:4000/colombia/users'
 const nameMaxAllowedStringLength = 50;
 const emailMaxAllowedStringLength = 30;
 export default function Body() {
+    const [allStates, setAllStates] = useState([]);
     const [departments, setDepartments] = useState([]);
     const [cities, setCities] = useState([]);
     const [city, setCity] = useState('');
@@ -34,8 +39,8 @@ export default function Body() {
         isState: false,
         cityEmpty: 'Debes selecionar una ciudad',
         isCity: false
-
     })
+    const [isCityInState, setCityInState] = useState(true);
 
     // const showPlaceState = () => {
     //     console.log(currPlace);
@@ -45,6 +50,9 @@ export default function Body() {
         axios.get(COL_PLACES_URL).then(response => {
             setDepartments(response.data);
             setDepartmentsReady(true);
+        })
+        axios.get(ALL_STATES).then(response => {
+            setAllStates(response.data);
         })
     });
 
@@ -136,30 +144,55 @@ export default function Body() {
             nameError: false,
             emailError: false,
             stateError: false,
-            cityError: false
+            cityError: false,
+            belongsToDepartment: true
         }
         // More validations!!
         if (!userData.name) {
-            validations.nameError = true
+            validations.nameError = true;
         }
         if (!userData.email) {
-            validations.emailError = true
+            validations.emailError = true;
         }
         if (!userData.state) {
-            validations.stateError = true
+            validations.stateError = true;
         }
         if (!userData.city) {
-            validations.cityError = true
+            validations.cityError = true;
         }
-
-
+        if (!allStates[userData.state].includes(userData.city)) {
+            console.log(departments, userData.city);
+            setCityInState(false);
+            validations.belongsToDepartment = false;
+        } else {
+            setCityInState(true);
+            validations.belongsToDepartment = true;
+        }
         setErrors({
             ...errors,
             'nameEmpty' : validations.nameError,
             'emailEmpty': validations.emailError,
             'isState': validations.stateError,
             'isCity': validations.cityError
-        })
+        });
+
+        if (!validations.nameError &&
+            !validations.emailError && 
+            !validations.cityError &&
+            !validations.stateError &&
+            validations.belongsToDepartment) {
+            console.log(userData);
+            axios.post(POST_USERS, userData)
+            .then(response => {
+                console.log(response);
+                swal({
+                    title: `Hey ${userData.name}!`,
+                    text: "Guardamos tu información exitosamente!",
+                    icon: "success",
+                    button: "Aww yiss!",
+                  });
+            })
+        }
 
     }
 
@@ -198,6 +231,7 @@ export default function Body() {
                                 />
                             {citiesReady ? '' : <small>Cargando ciudades...</small>}
                             {errors.isCity ? <small className="errors"> {errors.cityEmpty} </small>: ''}
+                            {isCityInState ? '' : <small className="errors"> {userInfo.city} no pertenece a {userInfo.state} </small>}
                             <div className="formFieldLineHeight"></div>
 
 
